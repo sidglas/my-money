@@ -3,12 +3,11 @@ import { useState } from 'react'
 import Rest from '../utils/rest'
 
 //console.log(props.match.params.data)
-console.log('chegando de um redirect 011?')
 const baseUrl = 'https://mymoney-dvpleno.firebaseio.com/'
 const { useGet, usePost, useDelete, usePatch } = Rest(baseUrl)
 
 const Movimentacoes = ({match}) => {
-  console.log('chegando de um redirect 012?')
+
   const data = useGet(`movimentacoes/${match.params.data}`)
   const dataMeses = useGet(`meses/${match.params.data}`)
 
@@ -57,15 +56,23 @@ const Movimentacoes = ({match}) => {
   }
 
   const alterarPrevisaoEntrada = (evt) => {
-    //console.log(evt.target.value)
-    patch(`meses/${match.params.data}`, {previsao_entrada: evt.target.value})
-
+    let valorPrevisaoEnt = evt.target.value 
+    if (!isNaN(valorPrevisaoEnt)  && valorPrevisaoEnt.search(/^[-]?\d+(\.)?\d+?$/) >= 0) {  
+      console.log('V A L O R', valorPrevisaoEnt)
+      patch(`meses/${match.params.data}`, {previsao_entrada: valorPrevisaoEnt})
+      setTimeout(()=>{
+        dataMeses.refetch()
+      }, 600)      
+    }
   }
 
-  const alterarPrevisaoSaida = (evt) => {
-    //console.log(evt.target.value)
-    patch(`meses/${match.params.data}`, {previsao_saida: evt.target.value})
-
+  const alterarPrevisaoSaida = async (evt) => {
+    let valorPrevisaoSai = evt.target.value 
+    if (!isNaN(valorPrevisaoSai)  && valorPrevisaoSai.search(/^[-]?\d+(\.)?\d+?$/) >= 0) {  
+      patch(`meses/${match.params.data}`, {previsao_saida: valorPrevisaoSai})
+      await sleep(600)
+      dataMeses.refetch()
+    }
   }  
 
 /*
@@ -85,7 +92,7 @@ const Movimentacoes = ({match}) => {
       <h1> Movimentações </h1>
       {
         !dataMeses.loading && dataMeses.data  && <div>
-          <span>Previsão de entrada: {dataMeses.data.previsao_entrada} <input type='text' onBlur={alterarPrevisaoEntrada} /></span> / Previsão de saída: {dataMeses.data.previsao_saida} <input type='text' onBlur={alterarPrevisaoSaida} /><br />
+          <span>Previsão de entrada: {dataMeses.data.previsao_entrada} <input type='text' onBlur={alterarPrevisaoEntrada} /></span> / <span>Previsão de saída: {dataMeses.data.previsao_saida} <input type='text' onBlur={alterarPrevisaoSaida} /></span><br />
           Entradas: {dataMeses.data.entradas} / Saídas: {dataMeses.data.saidas} 
         </div>
       }
