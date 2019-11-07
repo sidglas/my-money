@@ -54,8 +54,9 @@ const Movimentacoes = ({match}) => {
     dataMeses.refetch()
 
   }
-
+  const[ultFoco, setUltFoco] = useState('')
   const alterarPrevisaoEntrada = (evt) => {
+    console.log('Blur do previsaoentrada com ', ultFoco)
     let valorPrevisaoEnt = evt.target.value 
     if (!isNaN(valorPrevisaoEnt)  && valorPrevisaoEnt.search(/^[-]?\d+(\.)?\d+?$/) >= 0) {  
       console.log('V A L O R', valorPrevisaoEnt)
@@ -64,16 +65,41 @@ const Movimentacoes = ({match}) => {
         dataMeses.refetch()
       }, 600)      
     }
+    setUltFoco('')
   }
 
   const alterarPrevisaoSaida = async (evt) => {
+    console.log('Blur do previsaosaida com ', ultFoco)
     let valorPrevisaoSai = evt.target.value 
     if (!isNaN(valorPrevisaoSai)  && valorPrevisaoSai.search(/^[-]?\d+(\.)?\d+?$/) >= 0) {  
+      console.log('V A L O R', valorPrevisaoSai)
       patch(`meses/${match.params.data}`, {previsao_saida: valorPrevisaoSai})
       await sleep(600)
       dataMeses.refetch()
+      console.log('acontece algo depois do refetch ?????')
     }
+    console.log('acontece algo depois do refetch 01 ?????')
+    setUltFoco('')
+
   }  
+
+  const focoSaida = () => {
+    console.log('desfocando de ', ultFoco )
+    let focoAnt = ultFoco
+    setUltFoco('SAIDA')
+    console.log(' para FACOSAIDA')
+  }
+
+  const clickSaida = () => {
+    console.log('CLIQUEI NA SAÍDA AH CLIQUEI SIM')
+  }
+
+  const focoEntrada = () => {
+    console.log('desfocando de ', ultFoco )
+    let focoAnt = ultFoco
+    setUltFoco('ENTRADA')
+    console.log('para FACOENTRADA')
+  }
 
 /*
   const removerMovimentacao = async(id) => {
@@ -92,7 +118,19 @@ const Movimentacoes = ({match}) => {
       <h1> Movimentações </h1>
       {
         !dataMeses.loading && dataMeses.data  && <div>
-          <span>Previsão de entrada: {dataMeses.data.previsao_entrada} <input type='text' onBlur={alterarPrevisaoEntrada} /></span> / <span>Previsão de saída: {dataMeses.data.previsao_saida} <input type='text' onBlur={alterarPrevisaoSaida} /></span><br />
+          <span>Previsão de entrada: {dataMeses.data.previsao_entrada} 
+            <input type='text' 
+              onBlur={alterarPrevisaoEntrada} 
+              onFocus={focoEntrada}
+            />
+          </span> / 
+          <span>Previsão de saída: {dataMeses.data.previsao_saida} 
+            <input type='text' 
+              onBlur={alterarPrevisaoSaida} 
+              onFocus={focoSaida} 
+              onClick={clickSaida}
+            />
+          </span><br />
           Entradas: {dataMeses.data.entradas} / Saídas: {dataMeses.data.saidas} 
         </div>
       }
