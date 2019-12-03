@@ -7,7 +7,6 @@ const INITIAL_STATE = {
   data: {},
   error: ''
 }
-
 const reducer = (state, action) => {
 // Manipular meu estado
   if (action.type === 'REQUEST'){
@@ -27,26 +26,33 @@ const reducer = (state, action) => {
     return {
       ...state,
       loading: false,
-      error:action.error,
-      code: action.code
+      error:action.error
     }
   }    
   // Manipular meu estado
   return state
 }
+const getAuth = () => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    return '?auth='+token
+  }
+  return ''
+}
 const init = baseUrl => {
-// na refatoração url vira resource, que na verdade é o que vai além do "prefixo" da url
+  console.log(getAuth())
 	const useGet = resource => {
 	  const [data, dispatch] = useReducer(reducer, INITIAL_STATE)
     const carregar = async() => {
       try{
         dispatch({ type: 'REQUEST' })  
-        const res = await axios.get(baseUrl + resource + '.json') 
+        console.log('BusCaR ' , baseUrl + resource + '.json')
+        const res = await axios.get(baseUrl + resource + '.json' + getAuth()) 
 
-        console.log(res.data) 
+        console.log('No Try ', res.data) 
 
         if (res.data.error && Object.keys(res.data.error).length > 0) {
-          dispatch({ type: 'FAILURE', error: res.data.error })  
+          dispatch({ type: 'FAILURE', error: res.data.error})  
         }else{
           dispatch({ type: 'SUCCESS', data:res.data })  
         }   
@@ -71,7 +77,7 @@ const usePost = resource => {
   })  
   const post = async (data) => {
     dispatch({type:'REQUEST' })
-    const res = await axios.post(baseUrl + resource + '.json', data)
+    const res = await axios.post(baseUrl + resource + '.json' + getAuth(), data)
     dispatch({type:'SUCCESS',
     data: res.data  
     })
@@ -87,7 +93,7 @@ const useDelete = () => {
     dispatch({
       type:'REQUEST' 
     })
-    await axios.delete(baseUrl + resource + '.json')
+    await axios.delete(baseUrl + resource + '.json' + getAuth())
     dispatch ({
       type:'SUCCESS'
     })
@@ -95,17 +101,12 @@ const useDelete = () => {
   return[data, remove]
 }
 
-const usePatch = () => {
-  const [data, dispatch] = useReducer(reducer, {
-    loading: false,
-    data: {}
-  })  
-  const patch =  async (resource, data) => {
-    dispatch({
-      type:'REQUEST' 
-    })
+const usePatch = (resource) => {
+  const [data, dispatch] = useReducer(reducer, INITIAL_STATE)  
+  const patch =  async (data) => {
+    dispatch({ type:'REQUEST' })
     await axios
-      .patch(baseUrl + resource + '.json', data)
+      .patch(baseUrl + resource + '.json' + getAuth(), data)
     dispatch ({
       type:'SUCCESS'
     })

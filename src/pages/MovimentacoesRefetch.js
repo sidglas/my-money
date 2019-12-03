@@ -91,7 +91,7 @@ const Movimentacoes = ({match}) => {
   }
 
   const clickSaida = () => {
-    console.log('CLIQUEI NA SAÍDA AH CLIQUEI SIM')
+    console.log('CLIQUEI NA SAÍDA ')
   }
 
   const focoEntrada = () => {
