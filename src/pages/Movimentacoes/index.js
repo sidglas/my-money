@@ -4,6 +4,8 @@ import { useMovimentacaoApi} from '../../api'
 import InfoMes from './InfoMes'
 import AdicionarMovimentacao from './AdicionarMovimentacao'
 
+
+
 const Movimentacoes = ({match}) => {
   const { movimentacoes, salvarNovaMovimentacao, removerMovimentacao}  = useMovimentacaoApi(match.params.data)
 
@@ -13,6 +15,7 @@ const Movimentacoes = ({match}) => {
       await sleep(3000)
       //infoMes.refetch()      
   }
+
   const sleep = time => new Promise(resolve => setTimeout(resolve,time))
   const removerMovimentacaoClick = async(id) => {
     await removerMovimentacao(`movimentacoes/${match.params.data}/${id}`)
