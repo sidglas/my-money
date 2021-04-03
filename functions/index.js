@@ -16,7 +16,7 @@ exports.soma = functions.database.ref('/movimentacoes/{dia}')
     Object.keys(movimentacoes).forEach( m => {
       if (movimentacoes[m].valor > 0) {
         entradas += movimentacoes[m].valor
-      }else{
+       }else{
         saidas += movimentacoes[m].valor
       }
     })
